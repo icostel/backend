@@ -1,16 +1,17 @@
-const http = require('http');
+const express = require('express');
 const open = require('open');
 const fs = require('fs');
 
 //connection stuff
-const hostname = '127.0.0.1';
-const port = 3000;
+const HOST_NAME = '127.0.0.1';
+const PORT = 3000;
+const app = express();
 
 //API stuff
 const API_USER_ENDPOINT = '/api/users';
-const SERVER_URL = `http://127.0.0.1:3000`;
+const SERVER_URL = `http://${HOST_NAME}:${PORT}`;
 
-const server = http.createServer((req, res) => {
+app.get(API_USER_ENDPOINT, (req, res) => {
   if (req.url === API_USER_ENDPOINT) {
     let userData = fs.readFileSync('models.json')
   	res.write(userData.toString());
@@ -21,6 +22,4 @@ const server = http.createServer((req, res) => {
 
 open(`${SERVER_URL}${API_USER_ENDPOINT}`);
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at ${SERVER_URL}`);
-});
+app.listen(PORT, HOST_NAME, () => console.log(`Server running at ${SERVER_URL}`));
