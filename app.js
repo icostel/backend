@@ -8,18 +8,31 @@ const PORT = 3000;
 const app = express();
 
 //API stuff
-const API_USER_ENDPOINT = '/api/users';
 const SERVER_URL = `http://${HOST_NAME}:${PORT}`;
 
-app.get(API_USER_ENDPOINT, (req, res) => {
-  if (req.url === API_USER_ENDPOINT) {
-    let userData = fs.readFileSync('models.json')
-  	res.write(userData.toString());
-  	res.statusCode = 200;
-  	res.end();
-  }
+app.get('/api/users', (req, res) => {
+  let userData = fs.readFileSync('models.json');
+  res.write(userData.toString());
+  res.statusCode = 200;
+  res.end();
 });
 
-open(`${SERVER_URL}${API_USER_ENDPOINT}`);
+app.get('/api/users/:id', (req, res) => {
+  var userData = fs.readFileSync('models.json');
+  var users = JSON.parse(userData)['items'];
+  for(var i = 0 ; i < users.length; i++) {
+  	if (users[i]['id'] === req.params['id']) {
+  	  res.statusCode = 200;
+  	  res.write(JSON.stringify(users[i]));
+  	  res.end();
+  	}
+  }
+
+  res.statusCode = 404;
+  res.write('user not found, recheck id');
+  res.end();
+});
+
+open(`${SERVER_URL}/api/users/1`);
 
 app.listen(PORT, HOST_NAME, () => console.log(`Server running at ${SERVER_URL}`));
